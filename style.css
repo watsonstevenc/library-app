@@ -1,0 +1,24 @@
+body {
+    background-color: lightblue; /* colors the background */
+    font-family: sans-serif;
+    color: black;
+
+}
+h1 {
+    color: black; /* colors the header text */
+}
+th  {
+    color: red;
+    border: 1px solid black; /* adds a border to the table header */
+    padding: 20px;
+}
+td {
+    border: 1px solid black;
+    padding: 10px; /* adds padding to the border */
+}
+
+
+table{
+    width: 100%; /* stretches the table across the page */
+    border-collapse: collapse; /* puts the table into a clean grid vs individual boxes*/ 
+}
