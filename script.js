@@ -8,9 +8,41 @@ const books = [
 //we look for the book-list element in the html so we know where to put the data
 const bookTableBody = document.getElementById("book-list")
 
-//for each "book" line in the books variable, we create a table row and set the data for each column and then append it
+/*for each "book" line in the books variable, we create a table row and set the data for each column and then append it
 books.forEach(book => {
     const row = document.createElement("tr")
     row.innerHTML = `<td>${book.title}</td><td>${book.author}</td><td>${book.description}</td>`
     bookTableBody.appendChild(row)
+})*/
+
+    //rerender the table
+    function renderBooks() {
+    bookTableBody.innerHTML = "" // clear existing rows first
+    books.forEach(book => {
+        const row = document.createElement("tr")
+        row.innerHTML = `<td>${book.title}</td><td>${book.author}</td><td>${book.description}</td>`
+        bookTableBody.appendChild(row)
+    })
+    }  
+
+    renderBooks() //call function
+
+//function to update books
+document.getElementById("book-form").addEventListener("submit", function(event) {
+
+    event.preventDefault() //stops auto refresh
+
+    //get inputs from the form
+    const title = document.getElementById("input-title").value
+    const author = document.getElementById("input-author").value
+    const description = document.getElementById("input-description").value
+
+    //update books
+    books.push({ title: title, author: author, description: description })
+
+    renderBooks() //rerender after adding
+
+    //reset the form
+    document.getElementById("book-form").reset()
+
 })
