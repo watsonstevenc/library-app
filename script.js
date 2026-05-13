@@ -1,5 +1,5 @@
 //editing variable (null is add, number is edit)
-let editingIndex = null
+let editingId = null
 
 //API base URL for Render backend
 const API_URL = "https://library-app-ol53.onrender.com"
@@ -10,22 +10,22 @@ const bookTableBody = document.getElementById("book-list")
 //create a function renderBooks that creates records of title/author/description for each book
 function renderBooks(books) {
     bookTableBody.innerHTML = "" // clear existing rows first
-    books.forEach((book, index) => {
+    books.forEach((book) => {
         const row = document.createElement("tr")
         row.innerHTML = `
             <td>${book.title}</td>
             <td>${book.author}</td>
             <td>${book.description}</td>
-            <td><button onclick="deleteBook(${index})">Delete</button></td>
-            <td><button onclick="editBook(${index})">Edit</button></td>
+            <td><button onclick="deleteBook(${book.id})">Delete</button></td>
+            <td><button onclick="editBook(${book.id})">Edit</button></td>
             `
         bookTableBody.appendChild(row)
     })
 }  
 
 //create a function to delete books
-function deleteBook(index) {
-    fetch(`${API_URL}/books/${index}`, {
+function deleteBook(id) {
+    fetch(`${API_URL}/books/${id}`, {
         method: "DELETE"
     })
     .then(() => fetch(`${API_URL}/books`))
@@ -34,15 +34,15 @@ function deleteBook(index) {
 }
 
 //create a function to edit books
-function editBook(index) {
+function editBook(id) {
     fetch(`${API_URL}/books`)
         .then(response => response.json())
         .then(books => {
-            const book = books[index]
+            const book = books.find(b => b.id === id)
             document.getElementById("input-title").value = book.title
             document.getElementById("input-author").value = book.author
             document.getElementById("input-description").value = book.description
-            editingIndex = index
+            editingId = id
         })
 }
 
@@ -62,8 +62,8 @@ document.getElementById("book-form").addEventListener("submit", function(event) 
     const description = document.getElementById("input-description").value
 
     //update books
-    if (editingIndex !== null) {
-        fetch(`${API_URL}/books/${editingIndex}`, {
+    if (editingId !== null) {
+        fetch(`${API_URL}/books/${editingId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title, author, description })
@@ -71,7 +71,7 @@ document.getElementById("book-form").addEventListener("submit", function(event) 
         .then(() => fetch(`${API_URL}/books`))
         .then(response => response.json())
         .then(data => renderBooks(data))
-        editingIndex = null
+        editingId = null
     } else {
         fetch(`${API_URL}/books`, {
             method: "POST",
