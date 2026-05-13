@@ -1,6 +1,9 @@
 //editing variable (null is add, number is edit)
 let editingIndex = null
 
+//API base URL for Render backend
+const API_URL = "https://library-app-ol53.onrender.com"
+
 //we connect the book-list table in the html to the bookTableBody variable
 const bookTableBody = document.getElementById("book-list")
 
@@ -22,17 +25,17 @@ function renderBooks(books) {
 
 //create a function to delete books
 function deleteBook(index) {
-    fetch(`http://127.0.0.1:5000/books/${index}`, {
+    fetch(`${API_URL}/books/${index}`, {
         method: "DELETE"
     })
-    .then(() => fetch("http://127.0.0.1:5000/books"))
+    .then(() => fetch(`${API_URL}/books`))
     .then(response => response.json())
     .then(data => renderBooks(data))
 }
 
 //create a function to edit books
 function editBook(index) {
-    fetch("http://127.0.0.1:5000/books")
+    fetch(`${API_URL}/books`)
         .then(response => response.json())
         .then(books => {
             const book = books[index]
@@ -44,7 +47,7 @@ function editBook(index) {
 }
 
 //call function to populate the books on load
-fetch("http://127.0.0.1:5000/books")
+fetch(`${API_URL}/books`)
     .then(response => response.json())
     .then(data => renderBooks(data))
 
@@ -60,22 +63,22 @@ document.getElementById("book-form").addEventListener("submit", function(event) 
 
     //update books
     if (editingIndex !== null) {
-        fetch(`http://127.0.0.1:5000/books/${editingIndex}`, {
+        fetch(`${API_URL}/books/${editingIndex}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title, author, description })
         })
-        .then(() => fetch("http://127.0.0.1:5000/books"))
+        .then(() => fetch(`${API_URL}/books`))
         .then(response => response.json())
         .then(data => renderBooks(data))
         editingIndex = null
     } else {
-        fetch("http://127.0.0.1:5000/books", {
+        fetch(`${API_URL}/books`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title, author, description })
         })
-        .then(() => fetch("http://127.0.0.1:5000/books"))
+        .then(() => fetch(`${API_URL}/books`))
         .then(response => response.json())
         .then(data => renderBooks(data))
     }
