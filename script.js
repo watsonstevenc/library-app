@@ -1,33 +1,54 @@
-//this is the list of books that will populate in the page
-const books = [
-    { title: "Inspired", author: "Marty Cagan", description: "The Agile and OKR playbook for developing tech products"    },
-    { title: "The 21 Irrefutable Laws of Leadership", author: "John Maxwell", description: "The leadership playbook on how to lead teams and get better"    },
-    { title: "Good to Great", author: "Jim Collins", description: "What differentiates the truly great companies from just good"    }
-]
+//editing variable (null is add, number is edit)
+let editingIndex = null
 
-//we look for the book-list element in the html so we know where to put the data
+//we connect the book-list table in the html to the bookTableBody variable
 const bookTableBody = document.getElementById("book-list")
 
-/*for each "book" line in the books variable, we create a table row and set the data for each column and then append it
-books.forEach(book => {
-    const row = document.createElement("tr")
-    row.innerHTML = `<td>${book.title}</td><td>${book.author}</td><td>${book.description}</td>`
-    bookTableBody.appendChild(row)
-})*/
-
-    //rerender the table
-    function renderBooks() {
+//create a function renderBooks that creates records of title/author/description for each book
+function renderBooks(books) {
     bookTableBody.innerHTML = "" // clear existing rows first
-    books.forEach(book => {
+    books.forEach((book, index) => {
         const row = document.createElement("tr")
-        row.innerHTML = `<td>${book.title}</td><td>${book.author}</td><td>${book.description}</td>`
+        row.innerHTML = `
+            <td>${book.title}</td>
+            <td>${book.author}</td>
+            <td>${book.description}</td>
+            <td><button onclick="deleteBook(${index})">Delete</button></td>
+            <td><button onclick="editBook(${index})">Edit</button></td>
+            `
         bookTableBody.appendChild(row)
     })
-    }  
+}  
 
-    renderBooks() //call function
+//create a function to delete books
+function deleteBook(index) {
+    fetch(`http://127.0.0.1:5000/books/${index}`, {
+        method: "DELETE"
+    })
+    .then(() => fetch("http://127.0.0.1:5000/books"))
+    .then(response => response.json())
+    .then(data => renderBooks(data))
+}
 
-//function to update books
+//create a function to edit books
+function editBook(index) {
+    fetch("http://127.0.0.1:5000/books")
+        .then(response => response.json())
+        .then(books => {
+            const book = books[index]
+            document.getElementById("input-title").value = book.title
+            document.getElementById("input-author").value = book.author
+            document.getElementById("input-description").value = book.description
+            editingIndex = index
+        })
+}
+
+//call function to populate the books on load
+fetch("http://127.0.0.1:5000/books")
+    .then(response => response.json())
+    .then(data => renderBooks(data))
+
+//create a listener on the book-form submit action to get inputs and update the table.
 document.getElementById("book-form").addEventListener("submit", function(event) {
 
     event.preventDefault() //stops auto refresh
@@ -38,9 +59,26 @@ document.getElementById("book-form").addEventListener("submit", function(event) 
     const description = document.getElementById("input-description").value
 
     //update books
-    books.push({ title: title, author: author, description: description })
-
-    renderBooks() //rerender after adding
+    if (editingIndex !== null) {
+        fetch(`http://127.0.0.1:5000/books/${editingIndex}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, author, description })
+        })
+        .then(() => fetch("http://127.0.0.1:5000/books"))
+        .then(response => response.json())
+        .then(data => renderBooks(data))
+        editingIndex = null
+    } else {
+        fetch("http://127.0.0.1:5000/books", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, author, description })
+        })
+        .then(() => fetch("http://127.0.0.1:5000/books"))
+        .then(response => response.json())
+        .then(data => renderBooks(data))
+    }
 
     //reset the form
     document.getElementById("book-form").reset()

@@ -3,21 +3,21 @@
 <head> 
     <meta charset="UTF-8" /> <!--declare the characters to read is UTF8-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!--scale for mobile-->
-    <title>Library</title>
+    <title>Library</title> <!--put a title on the page-->
     <link rel="stylesheet" href="style.css" /> <!--embed css-->
     <script src="script.js" defer></script> <!--embed javascript-->
 </head>
 <body>
-    <h1>This is a Library App</h1> 
+    <h1>This is a Library App</h1>  <!--put a header on the page-->
 
     <form id="book-form"> <!--form to input books-->
         <label>Title</label>
-        <input type="text" id="input-title" placeholder="Book title"/>
+        <input type="text" id="input-title" placeholder="Book title"/> <!--input-title is the title-->
         <label>Author</label>
-        <input type="text" id="input-author" placeholder="Book author"/>
+        <input type="text" id="input-author" placeholder="Book author"/> <!--input-author is the author-->
         <label>Description</label>
-        <input type="text" id="input-description" placeholder="Book description"/>
-        <button type="submit">Add Book</button>
+        <input type="text" id="input-description" placeholder="Book description"/> <!--input-description is the description-->
+        <button type="submit">Add/Edit Book</button> <!--submit button to submit the entry-->
     </form>
 
     <table> <!--This is the book table-->
@@ -26,9 +26,11 @@
                 <th>Title</th>
                 <th>Author</th>
                 <th>Description</th>
+                <th>Actions</th>
+                <th>Edit</th>
             </tr>
         </thead>
-        <tbody id="book-list">
+        <tbody id="book-list"> <!--name of the table is book-list-->
     
       <!--    Below is the old HTML hard code values for tbody that is replaced by javascript  
             <tr>
